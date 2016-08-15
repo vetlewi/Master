@@ -54,8 +54,7 @@ SOURCES += source/main.cpp \
         source/userroutine/src/UserSingles.cpp
 
 
-HEADERS += source/version.h \
-        source/DefineFile.h \
+HEADERS += source/DefineFile.h \
         source/export/include/RootWriter.h \
         source/export/include/MamaWriter.h \
         source/core/include/DetectorRead.h \

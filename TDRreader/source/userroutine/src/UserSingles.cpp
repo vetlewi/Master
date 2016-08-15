@@ -32,14 +32,6 @@
 #include <cstdlib>
 #include <sstream>
 
-#ifdef __linux__
-    #include "/usr/local/root/include/TFile.h"
-    #include "/usr/local/root/include/TTree.h"
-#else
-    #include <TTree.h>
-    #include <TFile.h>
-#endif // __linux__
-
 
 void UserSingles::CreateSpectra()
 {
@@ -102,18 +94,7 @@ bool UserSingles::UserCommand(const std::string &cmd)
 
     std::string command;
     icmd >> command;
-    if (command == "Tree" || command == "TREE" || command == "tree"){
-        std::string fname;
-        icmd >> fname;
-
-        file = new TFile(fname.c_str(), "recreate");
-        tree = new TTree("calibration", "Calibration");
-        for (int i = 0 ; i < 8 ; ++i){
-            std::string bName = "Clover_"+std::to_string(i+1);
-            tree->Branch(bName.c_str(), &cEv[i].nA, "nA/I:adcdataA[nA]/s:timestampA[nA]/L:e_calA[nA]/D:nB/I:adcdataB[nB]/s:timestampB[nB]/L:e_calB[nB]/D:nC/I:adcdataC[nC]/s:timestampC[nC]/L:e_calC[nC]/D:nD/I:adcdataD[nD]/s:timestampD[nD]/L:e_calD[nD]/D");
-        }
-        return true;
-    } else if (command == "Beta") {
+    if (command == "Beta") {
         icmd >> beta;
         doppler = true;
         gamma = 1/sqrt(1-beta*beta);
@@ -133,41 +114,11 @@ bool UserSingles::SortSingles(const Event& event)
     
     std::string telescope;
     double Energy;
-    int64_t start_t=0;
     for (int i = 0 ; i < event.length-1 ; ++i){
 
         telescope = detectors->Find(event.words[i].address).getTelescope();
         Energy = GainEnergy(event.words[i].address, event.words[i].adcdata+_rando);
         if (telescope[0] == 'C'){
-            if (makeTree){
-                if (event.words[i].timestamp-start_t >= 150){
-                    start_t = event.words[i].timestamp;
-                    tree->Fill();
-                }
-
-                if (telescope[2] == 'A'){
-                    cEv[telescope[1]-'1'].adcdataA[cEv[telescope[1]-'1'].nA] = event.words[i].adcdata;
-                    cEv[telescope[1]-'1'].timestampA[cEv[telescope[1]-'1'].nA] = event.words[i].timestamp;
-                    cEv[telescope[1]-'1'].e_calA[cEv[telescope[1]-'1'].nA] = Energy;
-                    cEv[telescope[1]-'1'].nA += 1;
-                } else if (telescope[2] == 'B'){
-                    cEv[telescope[1]-'1'].adcdataB[cEv[telescope[1]-'1'].nB] = event.words[i].adcdata;
-                    cEv[telescope[1]-'1'].timestampB[cEv[telescope[1]-'1'].nB] = event.words[i].timestamp;
-                    cEv[telescope[1]-'1'].e_calB[cEv[telescope[1]-'1'].nB] = Energy;
-                    cEv[telescope[1]-'1'].nB += 1;
-                } else if (telescope[2] == 'C'){
-                    cEv[telescope[1]-'1'].adcdataC[cEv[telescope[1]-'1'].nC] = event.words[i].adcdata;
-                    cEv[telescope[1]-'1'].timestampC[cEv[telescope[1]-'1'].nC] = event.words[i].timestamp;
-                    cEv[telescope[1]-'1'].e_calC[cEv[telescope[1]-'1'].nC] = Energy;
-                    cEv[telescope[1]-'1'].nC += 1;
-                } else if (telescope[2] == 'D'){
-                    cEv[telescope[1]-'1'].adcdataD[cEv[telescope[1]-'1'].nD] = event.words[i].adcdata;
-                    cEv[telescope[1]-'1'].timestampD[cEv[telescope[1]-'1'].nD] = event.words[i].timestamp;
-                    cEv[telescope[1]-'1'].e_calD[cEv[telescope[1]-'1'].nD] = Energy;
-                    cEv[telescope[1]-'1'].nD += 1;
-                }
-            }
-
             h_Clover_crystal[telescope[1]-'1'][telescope[2] - 'A']->Fill(Energy);
             h_Clover_crystal_raw[telescope[1]-'1'][telescope[2] - 'A']->Fill(event.words[i].adcdata);
             if (i + 1 < event.length){
@@ -218,9 +169,5 @@ bool UserSingles::SortSingles(const Event& event)
 
 bool UserSingles::End()
 {
-    if (makeTree){
-        file->Write();
-        file->Close();
-    }
     return true;
 }

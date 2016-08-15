@@ -25,14 +25,10 @@
 
 struct Event;
 
-class TTree;
-class TFile;
-class TBranch;
-
 class UserSingles : public TDRRoutine
 {
 public:
-    UserSingles() : makeTree( false ), doppler( false ) { }
+    UserSingles() : doppler( false ) { }
     ~UserSingles() {}
 
 	bool SortSingles(const Event& event);
@@ -48,29 +44,6 @@ protected:
 	void CreateSpectra();
 
 private:
-    struct clover_event
-    {
-        int nA;
-        uint16_t adcdataA[256];
-        int64_t timestampA[256];
-        double e_calA[256];
-
-        int nB;
-        uint16_t adcdataB[256];
-        int64_t timestampB[256];
-        double e_calB[256];
-
-        int nC;
-        uint16_t adcdataC[256];
-        int64_t timestampC[256];
-        double e_calC[256];
-
-        int nD;
-        uint16_t adcdataD[256];
-        int64_t timestampD[256];
-        double e_calD[256];
-
-    };
 
     //! Particle telescopes.
     Histogram1Dp h_DSSD_A_dX[16];
@@ -103,7 +76,6 @@ private:
     //! All particle detectors in one histogram:
     Histogram2Dp m_Particle_E;
 
-    bool makeTree;
 
     bool doppler;
     double beta;
@@ -112,12 +84,6 @@ private:
     inline double Dop(double Eg, double omg, double sig){
         return gamma*Eg*(1 - beta*sin(omg*3.14159265359/180.)*sin(sig*3.14159265359/180.));
     }
-
-
-    TTree *tree;
-    TFile *file;
-
-    clover_event cEv[8];
 };
 
 #endif // USERSSINGLES_H
