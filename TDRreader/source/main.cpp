@@ -18,6 +18,11 @@
  *                                                                             *
  *******************************************************************************/
 
+/*! \mainpage TDRreader
+ * This is the automatically created documentation for TDRreader. To explore the
+ * software I would suggest to start with the Sort function in the UserSort class.
+ */
+
 #include "TDRRoutine.h"
 #include "OfflineSorting.h"
 
