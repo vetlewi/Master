@@ -40,7 +40,7 @@ public:
 	/*! \return true if time is within the gate, false otherwise.
 	 */
 	bool Evaluate(const uint16_t &address,	/*!< ADC address of detector.	*/
-                  const int64_t &time_value		/*!< Time difference.			*/) const;
+                      const int64_t &time_value		/*!< Time difference.			*/) const;
 
 private:
 	struct Gate_t {

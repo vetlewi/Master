@@ -69,7 +69,7 @@ TimeGate::Gate_t TimeGate::Find(const uint16_t &address) const
 		return Gate_t(0,0);
 }
 
-bool TimeGate::Evaluate(const uint16_t &address, const long long &time_value) const
+bool TimeGate::Evaluate(const uint16_t &address, const int64_t &time_value) const
 {
     Gate_t gate = Find(address);
     bool result;

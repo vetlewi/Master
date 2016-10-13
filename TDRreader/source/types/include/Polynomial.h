@@ -23,6 +23,7 @@
 
 
 #include <string>
+#include <memory>
 
 //! A general polynomial.
 class Polynomial

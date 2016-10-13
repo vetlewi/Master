@@ -17,11 +17,11 @@ LINK		=	g++
 RM_FILE		=	rm -f
 
 ## ROOT flags/libs.
-RLIBS		=	$(shell root-config --ldflags --libs)
+RLIBS		=	$(shell root-config --libs)
 RFLAGS		=	$(shell root-config --cflags)
 
 CFLAGS		=	-O3
-CXXFLAGS	=	-Wall -W -pipe -pthread -stdlib=libc++ -m64 -std=c++11 -O3
+CXXFLAGS	=	-Wall -W -pipe -pthread -m64 -O3
 
 
 #### Files
@@ -86,13 +86,11 @@ INCPATH		=	-I. \
 				-I./source/types/include \
 				-I./source/userroutine/include
 
-all: $(TARGET) $(DUMMY)
+all: $(TARGET)
 
-DUMMY:
-	mkdir $(TARGETDIR)
 
 $(TARGET): $(OBJECTS)
-	$(LINK) $(LFLAGS) $(RLIBS) -o $(TARGET) $(OBJECTS)
+	$(LINK) $(LFLAGS) -o $(TARGET) $(OBJECTS) $(RLIBS)
 
 $(TARGETDIR)/main.o: ./source/main.cpp
 	$(CXX) -c $(CXXFLAGS) $(RFLAGS) $(INCPATH) -o $(TARGETDIR)/main.o ./source/main.cpp
